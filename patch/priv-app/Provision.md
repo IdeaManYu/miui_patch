@@ -14,6 +14,7 @@ apktool命令： `apktool d *.apk`
 # 关键代码：
 button_upload_debug_log_key
 button_auto_update_key
+button_personalized_ad_key
 # 创建 removePreference 方法移除不必要的条目，例如：
 iput-object v0, p0, Lcom/android/provision/fragment/OtherSettingsFragment;->mAutoUpdatePreference:Landroid/preference/CheckBoxPreference;
 
@@ -32,10 +33,11 @@ invoke-virtual {v0, v1}, Landroid/preference/PreferenceScreen;->removePreference
 ### 默认关闭相关设置
 代码位置： `res/xml/other_settings.xml`
 ```
-# 修改以下4项：
+# 修改以下5项：
 button_user_experience_key
 button_mifg_online_content
 button_upload_debug_log_key
 button_auto_update_key
+button_personalized_ad_key
 # 的键值为false
 ```

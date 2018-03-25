@@ -3,23 +3,25 @@ APK位置： `/system/app/ThemeManager/ThemeManager.apk`
 
 apktool命令： `apktool d -r *.apk`
 
+**注**： V9.5及以上版本已加入混淆，须根据代码特征修改
+
 ### 删除首页banners广告位
 代码路径： `com/android/thememanager`
 ```
 .method public getAdMarker()I
 # return false
 
-.method private static isSupported
+# 在上面方法对应的类中有一个布尔型函数，通过 ->getImgUrls()Ljava/util/List; 定位
 # return false
+# 函数原型： .method private static isSupported
 ```
-代码位置： `com/android/thememanager/view/AdBannerView.smali`
+代码路径： `com/android/thememanager/view`
 ```
-.method protected init()V
-# return null
+# 在 res/values/public.xml 中找到 ad_banner_view 对应的 id
+# 在当前路径搜索该id所在的方法，并在当前类搜索调用该方法的函数，return null
 ```
-代码位置： `com/android/thememanager/v9/adapter/V9ElementAdapter.smali`
+代码路径： `com/android/thememanager/v9`
 ```
-.method public onCreateViewHolder
 # 在 res/values/public.xml 中找到 element_ad_banner 、element_icon_group 对应的 id
 # 在当前路径搜索该id所在的地方，删除相关代码段，例如：
 # 删除前：

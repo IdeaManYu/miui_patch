@@ -84,86 +84,37 @@ invoke-virtual {v0, v1}, Lcom/android/settings/widget/CustomValuePreference;->se
 ```
 
 ### 恢复『更多应用』原来的展示样式
+关键代码： `com.miui.appmanager.AppManagerMainActivity`
+
+代码位置： `com/android/settings/applications/ApplicationsContainer.smali`
+```
+.method public onActivityCreated
+# 搜索 Lmiui/os/Build;->IS_TABLET:Z 将其改成 Lcom/winter/mysu;->TRUE:Z
+```
 代码位置： `com/android/settings/applications/ManageApplicationsActivity.smali`
 ```
 .method protected onCreate
 # 搜索 Lmiui/os/Build;->IS_TABLET:Z 将其改成 Lcom/winter/mysu;->TRUE:Z
 ```
+代码位置： `com/android/settings/search/tree/ApplicationsSettingsTree.smali`
+```
+.method public getIntent
+# 搜索 Lmiui/os/Build;->IS_TABLET:Z 将其改成 Lcom/winter/mysu;->TRUE:Z
+```
 代码位置： `com/android/settings/MiuiSettings.smali`
 ```
 .method public onBuildStartFragmentIntent
-# 安卓N及以上，将以下代码：
+# 将以下代码：
 const-string/jumbo v1, "com.miui.securitycenter"
 
 const-string/jumbo v2, "com.miui.appmanager.AppManagerMainActivity"
 
 invoke-virtual {v0, v1, v2}, Landroid/content/Intent;->setClassName(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
 
-.line 291
-invoke-virtual {p0}, Lcom/android/settings/MiuiSettings;->isInMultiWindowMode()Z
-
-move-result v1
-
-if-eqz v1, :cond_2
-
-.line 292
-const/high16 v1, 0x10000000
-
-invoke-virtual {v0, v1}, Landroid/content/Intent;->addFlags(I)Landroid/content/Intent;
-
-.line 299
-
 # 修改为：
 const-class v1, Lcom/android/settings/applications/ManageApplicationsActivity;
 
 invoke-virtual {v0, p0, v1}, Landroid/content/Intent;->setClass(Landroid/content/Context;Ljava/lang/Class;)Landroid/content/Intent;
-
-# 安卓M及以下，将以下代码：
-const-string v1, "com.miui.securitycenter"
-
-const-string v2, "com.miui.appmanager.AppManagerMainActivity"
-
-invoke-virtual {v0, v1, v2}, Landroid/content/Intent;->setClassName(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
-
-# 修改为：
-const-class v1, Lcom/android/settings/applications/ManageApplicationsActivity;
-
-invoke-virtual {v0, p0, v1}, Landroid/content/Intent;->setClass(Landroid/content/Context;Ljava/lang/Class;)Landroid/content/Intent;
-```
-代码位置： `com/android/settings/SettingsFragment.smali`
-```
-# 搜索代码 "com.miui.securitycenter"
-# 安卓N及以上，将以下代码：
-const-string/jumbo v0, "com.miui.securitycenter"
-
-const-string/jumbo v1, "com.miui.appmanager.AppManagerMainActivity"
-
-invoke-virtual {v9, v0, v1}, Landroid/content/Intent;->setClassName(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
-
-.line 518
-invoke-virtual {p0}, Lcom/android/settings/SettingsFragment;->getActivity()Landroid/app/Activity;
-
-move-result-object v0
-
-invoke-virtual {v0}, Landroid/app/Activity;->isInMultiWindowMode()Z
-
-move-result v0
-
-if-eqz v0, :cond_1
-
-.line 519
-const/high16 v0, 0x10000000
-
-invoke-virtual {v9, v0}, Landroid/content/Intent;->addFlags(I)Landroid/content/Intent;
-
-.line 526
-
-# 修改为：
-const-class v0, Lcom/android/settings/applications/ManageApplicationsActivity;
-
-invoke-virtual {v9, v2, v0}, Landroid/content/Intent;->setClass(Landroid/content/Context;Ljava/lang/Class;)Landroid/content/Intent;
-
-# 安卓M及以下同上
 ```
 
 ### 移除系统与安全中的广告设置项

@@ -11,7 +11,7 @@ apktool命令： `apktool d -r *.apk`
 ```
 
 ### 移除快递物流信息详情页的菜鸟裹裹APP推广
-代码位置： `com/miui/personalassistant/express/fragment/ExpressProgressFragment.smali`
+代码位置： `com/miui/personalassistant/express/fragment/DetailFragment.smali`
 
 修改前：
 ```
@@ -151,6 +151,14 @@ apktool命令： `apktool d -r *.apk`
     :cond_2
     return-void
 .end method
+```
+代码位置： `com/miui/personalassistant/ui/fragment/ExpressSettingFragment.smali`
+```
+.method private initProviderView(Landroid/view/View;)V
+# 删除以下代码：
+.line 101
+.local v0, "providerView":Landroid/widget/RelativeLayout;
+invoke-virtual {v0, p0}, Landroid/widget/RelativeLayout;->setOnClickListener(Landroid/view/View$OnClickListener;)V
 ```
 
 ### 移除垃圾的保护机制（貌似是签名）

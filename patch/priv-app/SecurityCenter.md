@@ -5,15 +5,43 @@ apktool命令： `apktool d -r *.apk`
 
 对 `IS_INTERNATIONAL_BUILD:Z` 统一处理的方法：将 `winter` 文件夹拷贝到 `smali/com` 目录下，将 `Lmiui/os/Build;->IS_INTERNATIONAL_BUILD:Z` 修改为 `Lcom/winter/mysu;->TRUE:Z`
 
+### 移除安全扫描、游戏加速、应用锁中的广告（V9.2及以下部分版本适用）
+反编译 res，在 `values/public.xml` 分别找到 `display_antivirus_Ads` 、`display_gamebooster_Ads` 、`display_gamebooster_xunyou` （均为 bool 型）对应的 `id`，再在 `smali` 中查找其对应的布尔型函数，return false
 
-### 移除安全扫描、游戏加速、应用锁、流量助手中的广告
-
-反编译 res，在 `values/public.xml` 分别找到 `display_antivirus_Ads` 、`display_gamebooster_Ads` 、`display_gamebooster_xunyou` 、`overlay_config_datausage_purchase_enabled` （均为 bool 型）对应的 `id`，再在 `smali` 中查找其对应的布尔型函数，return false
+### 移除网络助手主界面的『流量购买』条目
+代码位置： `com/miui/networkassistant/ui/NetworkAssistantActivity.smali`
 ```
-# 同时在路径 com/miui/networkassistant 中搜索以下方法，return false
-.method public isNATrafficPurchaseAvailable()Z
+.method private checkTrafficPurchaseEnable
+# 在某些 MIUI 版本中，该方法可能是 .method private checkTrafficPurchaseAvaliable
+# 搜索 Lcom/miui/networkassistant/utils/DeviceUtil;->IS_INTERNATIONAL_BUILD:Z 将其改成 Lcom/winter/mysu;->TRUE:Z
+```
+
+### 移除网络助手的流量购买提醒
+代码位置： `com/miui/networkassistant/config/SimUserInfo.smali`
+```
 .method public isPurchaseTipsEnable()Z
+# return false
+```
+代码位置： `com/miui/networkassistant/provider/NetworkAssistantProvider.smali`
+```
+.method private queryDataUsageNotiStatus
+# 将以下代码：
+invoke-static {v4}, Lmiui/provider/ExtraNetwork;->isTrafficPurchaseSupported(Landroid/content/Context;)Z
+
+move-result v2
+# 修改为 sget-boolean v0, Lcom/winter/mysu;->FALSE:Z
+```
+代码位置： `com/miui/networkassistant/utils/LoadConfigUtil.smali`
+```
 .method public static isDataUsagePurchaseEnabled
+# return false
+```
+
+### 移除网络诊断的一键WLAN测速功能
+代码位置： `com/miui/networkassistant/ui/activity/NetworkDiagnosticsActivity.smali`
+```
+.method public onCreateOptionsMenu
+# 搜索 Lcom/miui/networkassistant/utils/DeviceUtil;->IS_INTERNATIONAL_BUILD:Z 将其改成 Lcom/winter/mysu;->TRUE:Z
 ```
 
 ### 移除安全月报
@@ -25,21 +53,6 @@ apktool命令： `apktool d -r *.apk`
 # 一般在 com/miui/push 目录
 ```
 
-### 移除网络助手的『流量购买』标签
-代码位置： `com/miui/networkassistant/ui/NetworkAssistantActivity.smali`
-```
-.method private checkTrafficPurchaseAvaliable
-# 或者 .method private checkTrafficPurchaseEnable
-# 搜索 Lcom/miui/networkassistant/utils/DeviceUtil;->IS_INTERNATIONAL_BUILD:Z 将其改成 Lcom/winter/mysu;->TRUE:Z
-```
-
-### 移除网络诊断的一键WLAN测速功能
-代码位置： `com/miui/networkassistant/ui/activity/NetworkDiagnosticsActivity.smali`
-```
-.method public onCreateOptionsMenu
-# 搜索 Lmiui/os/Build;->IS_INTERNATIONAL_BUILD:Z 将其改成 Lcom/winter/mysu;->TRUE:Z
-```
-
 ### 恢复应用权限监控&USB安装管理设置入口
 代码位置： `com/miui/permcenter/MainAcitivty.smali`
 ```
@@ -48,7 +61,7 @@ apktool命令： `apktool d -r *.apk`
 # 搜索代码 IS_STABLE_VERSION:Z 移除开发版自带的ROOT权限管理（对其 return true）
 ```
 
-### 移除安全体检（立即优化）完成页的资讯推荐
+### 移除安全体检（立即优化）完成页的资讯推荐 （V9.5及以上版本，该方法关联病毒扫描、应用锁、游戏加速的广告，统一修改此处即可）
 代码路径： `com/miui/securityscan`
 ```
 # 在该路径中查找：key_sc_setting_news_recommend ，此代码会在两个方法出现，对布尔值函数return false

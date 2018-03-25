@@ -4,7 +4,7 @@ APK位置： `/system/priv-app/CleanMaster/CleanMaster.apk`
 apktool命令： `apktool d -r *.apk`
 
 ### 移除广告
-代码位置： `com/miui/optimizecenter/result/DataModel.smali`
+代码位置： `com/miui/optimizecenter/information/DataModel.smali`
 ```
 .method public static post
 # 对诸如以下的代码执行修改：
@@ -38,6 +38,9 @@ move-result v1    # 修改为 sget-boolean v1, Lcom/winter/mysu;->FALSE:Z
 
 # 实际上是操作设置中的关闭资讯推荐选项，这样处理可在移除广告的同时保留『微信专清』功能
 # "controlled":Z --> TRUE，"isOpen":Z --> FALSE
+
+# 同样的修改还有 com/miui/optimizecenter/deepclean/tencent/InformationDataManager$LoadTask.smali
+# 方法是 .method protected varargs doInBackground([Ljava/lang/Void;)Ljava/lang/Void;
 ```
 
 ### 移除信息流设置项
